@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from __future__ import unicode_literals
 import math
 import unittest
 from datetime import date, datetime, time
@@ -283,12 +284,12 @@ str3 = """\
 
     def test_literal_inline(self):
         self.decodes_to(
-            r"""
+            """
         # What you see is what you get.
-        winpath  = 'C:\Users\nodejs\templates'
-        winpath2 = '\\ServerX\admin$\system32\'
+        winpath  = 'C:\\Users\\nodejs\\templates'
+        winpath2 = '\\\\ServerX\\admin$\\system32\\'
         quoted   = 'Tom "Dubs" Preston-Werner'
-        regex    = '<\i\c*\s*>'
+        regex    = '<\\i\\c*\\s*>'
         """,
             {
                 "winpath": "C:\\Users\\nodejs\\templates",

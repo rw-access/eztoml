@@ -262,6 +262,12 @@ class Encoder(object):
 
     def _encode_string(self, value, stream, multiline=True):
         # type: (str, TokenStream, bool) -> None
+        if isinstance(value, bytes):
+            try:
+                value = value.decode("utf-8")
+            except UnicodeDecodeError:
+                raise EzTomlEncodeError("Unable to encode bytes: {}".format(repr(value)))
+
         is_long = len(value) + len(stream._prefix) > 120
         multiline = multiline and ("\n" in value.lstrip() or is_long)
 
@@ -401,8 +407,12 @@ class Encoder(object):
             stream.append("true")
         elif value is False:
             stream.append("false")
+        elif isinstance(value, float):
+            # use repr() instead of str() because repr maintains precision better
+            # for Python 2.7
+            stream.append(repr(value))
         elif isinstance(value, number_types):
-            stream.append(unicode_type(value))
+            stream.append(str(value))
         elif isinstance(value, string_types):
             self._encode_string(value, stream, multiline=multiline)
         elif isinstance(value, dict):
