@@ -1,2 +1,4 @@
 # eztoml
-An easier implementation of toml with pretty printing
+An easier Python implementation of TOML with pretty printing.
+
+
