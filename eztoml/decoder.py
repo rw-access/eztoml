@@ -21,9 +21,9 @@ from .tz import EzTomlTz
 from .utils import string_types
 
 try:
-    from_codepoint = chr
-except NameError:
     from_codepoint = unichr
+except NameError:
+    from_codepoint = chr
 
 
 class Decoder(object):

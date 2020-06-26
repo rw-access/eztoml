@@ -410,7 +410,7 @@ trimmed in raw strings.
         hex2 = 0xdeadbeef
         hex3 = 0xdead_beef
         """,
-            {"hex1": 0xDEADBEEF, "hex2": 0xDEADBEEF, "hex3": 0xDEAD_BEEF},
+            {"hex1": 0xDEADBEEF, "hex2": 0xDEADBEEF, "hex3": 0xDEADBEEF},
         )
 
         for v in decoded.values():
