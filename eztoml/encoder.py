@@ -1,14 +1,12 @@
 from __future__ import unicode_literals
-from eztoml.errors import EzTomlEncodeError
-from collections import OrderedDict
-from datetime import date, time, datetime
-from contextlib import contextmanager
-from functools import lru_cache
+
 import re
 import unicodedata
-from .utils import string_types, unicode_type
+from collections import OrderedDict
+from contextlib import contextmanager
+from datetime import date, time, datetime
 
-from .utils import string_types, unicode_type, number_types
+from eztoml.errors import EzTomlEncodeError
 from .tokens import (
     CONTROL_CHARS,
     SQ_INLINE,
@@ -19,6 +17,16 @@ from .tokens import (
     SQ_MULTI,
     NEWLINE,
 )
+from .utils import string_types, unicode_type, number_types
+
+try:
+    from functools import lru_cache
+except ImportError:
+    # ignore if unavailable
+    def lru_cache(**_):
+        def decorator(f):
+            return f
+        return decorator
 
 
 @lru_cache(maxsize=1024)

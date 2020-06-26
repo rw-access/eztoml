@@ -1,4 +1,5 @@
 from __future__ import unicode_literals
+
 import datetime
 import re
 
@@ -16,8 +17,8 @@ from .tokens import (
     CONTROL_CHARS,
     ESCAPES,
 )
-from .utils import string_types
 from .tz import EzTomlTz
+from .utils import string_types
 
 try:
     from_codepoint = chr

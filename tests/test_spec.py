@@ -1,7 +1,9 @@
-from eztoml import loads, EzTomlDecodeError, EzTomlTz, dumps
-from datetime import date, datetime, time
-import unittest
+# -*- coding: utf-8 -*-
 import math
+import unittest
+from datetime import date, datetime, time
+
+from eztoml import loads, EzTomlDecodeError, EzTomlTz, dumps
 
 
 class TestSpecification(unittest.TestCase):

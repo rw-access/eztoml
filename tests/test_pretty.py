@@ -1,7 +1,8 @@
-import unittest
-import eztoml
-import os
 import io
+import os
+import unittest
+
+import eztoml
 
 test_dir = os.path.dirname(os.path.abspath(__file__))
 

@@ -1,6 +1,6 @@
-import eztoml
 import unittest
 
+import eztoml
 import eztoml.source
 
 src = eztoml.source.Source

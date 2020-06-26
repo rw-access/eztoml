@@ -1,6 +1,6 @@
 """Easy TOML."""
-from .decoder import Decoder
 from eztoml.encoder import Encoder
+from .decoder import Decoder
 from .errors import EzTomlDecodeError, EzTomlEncodeError
 from .tz import EzTomlTz
 

@@ -1,9 +1,10 @@
-import eztoml
-import unittest
-import yaml
 import io
 import os
+import unittest
 
+import yaml
+
+import eztoml
 import eztoml.source
 
 src = eztoml.source.Source
