@@ -32,4 +32,5 @@ setup(
     ],
     url='https://eztoml.readthedocs.io',
     packages=['eztoml'],
+    test_requires=["PyYAML~=5.3"]
 )
