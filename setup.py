@@ -30,7 +30,14 @@ setup(
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
     ],
-    url='https://eztoml.readthedocs.io',
     packages=['eztoml'],
-    tests_require=["PyYAML~=5.3"]
+    tests_require=["PyYAML~=5.3"],
+    entry_points={
+        'console_scripts': [
+            'toml-lint=eztoml:lint_files',
+        ],
+        'pygments.lexers': [
+            'eql=eql.highlighters:EqlLexer'
+        ]
+    },
 )
