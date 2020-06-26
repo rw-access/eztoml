@@ -1,0 +1,138 @@
+[array]
+key1 = [1, 2, 3]
+key2 = ["red", "yellow", "green"]
+key3 = [
+  [1, 2],
+  [3, 4, 5],
+]
+key4 = [
+  [1, 2],
+  ["a", "b", "c"],
+]
+key5 = [1, 2, 3]
+key6 = [1, 2]
+
+[boolean]
+False = false
+True = true
+
+[datetime]
+key1 = 1979-05-27T07:32:00+00:00
+key2 = 1979-05-27T00:32:00-07:00
+key3 = 1979-05-27T00:32:00.999999-07:00
+
+[float]
+
+  [float.both]
+  key = 6.626e-34
+
+  [float.exponent]
+  key1 = 5e+22
+  key2 = 1000000.0
+  key3 = -0.02
+
+  [float.fractional]
+  key1 = 1.0
+  key2 = 3.1415
+  key3 = -0.01
+
+  [float.underscores]
+  key1 = 9224617.445991227
+  key2 = inf
+
+[[fruit]]
+name = "apple"
+
+  [fruit.physical]
+  color = "red"
+  shape = "round"
+
+  [[fruit.variety]]
+  name = "red delicious"
+
+  [[fruit.variety]]
+  name = "granny smith"
+
+[[fruit]]
+name = "banana"
+
+  [[fruit.variety]]
+  name = "plantain"
+
+[integer]
+key1 = 99
+key2 = 42
+key3 = 0
+key4 = -17
+
+  [integer.underscores]
+  key1 = 1000
+  key2 = 5349221
+  key3 = 12345
+
+[[products]]
+name = "Hammer"
+sku = 738594937
+
+[[products]]
+
+[[products]]
+color = "gray"
+name = "Nail"
+sku = 284758393
+
+[string]
+
+  [string.basic]
+  basic = """
+I'm a string. "You can quote me". Name\tJosé
+Location\tSF."""
+
+  [string.literal]
+  quoted = 'Tom "Dubs" Preston-Werner'
+  regex = '<\i\c*\s*>'
+  winpath = 'C:\Users\nodejs\templates'
+  winpath2 = '\\ServerX\admin$\system32\'
+
+    [string.literal.multiline]
+    lines = """
+The first newline is
+trimmed in raw strings.
+   All other whitespace
+   is preserved.
+"""
+    regex2 = "I [dw]on't need \\d{2} apples"
+
+  [string.multiline]
+  key1 = """
+One
+Two"""
+  key2 = """
+One
+Two"""
+  key3 = """
+One
+Two"""
+
+    [string.multiline.continued]
+    key1 = "The quick brown fox jumps over the lazy dog."
+    key2 = "The quick brown fox jumps over the lazy dog."
+    key3 = "The quick brown fox jumps over the lazy dog."
+
+[table]
+key = "value"
+
+  [table.inline]
+
+    [table.inline.name]
+    first = "Tom"
+    last = "Preston-Werner"
+
+    [table.inline.point]
+    x = 1
+    y = 2
+
+  [table.subtable]
+  key = "another value"
+
+[x.y.z.w]
