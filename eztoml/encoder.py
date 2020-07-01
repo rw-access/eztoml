@@ -416,7 +416,7 @@ class Encoder(object):
         elif isinstance(value, string_types):
             self._encode_string(value, stream, multiline=multiline)
         elif isinstance(value, dict):
-            stream.append("{  ")
+            stream.append("{")
             for pos, (k, v) in enumerate(self.sorted(value.items())):
                 if pos != 0:
                     stream.append(", ")

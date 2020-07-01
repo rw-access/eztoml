@@ -6,7 +6,7 @@ from .decoder import Decoder
 from .errors import EzTomlDecodeError, EzTomlEncodeError, EzTomlError
 from .tz import EzTomlTz
 
-__version__ = "0.0.1.dev1"
+__version__ = "0.0.1.dev2"
 
 
 def loads(src, **kwargs):
