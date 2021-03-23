@@ -36,8 +36,5 @@ setup(
         'console_scripts': [
             'toml-lint=eztoml:lint_files',
         ],
-        'pygments.lexers': [
-            'eql=eql.highlighters:EqlLexer'
-        ]
     },
 )

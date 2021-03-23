@@ -6,7 +6,7 @@ from .decoder import Decoder
 from .errors import EzTomlDecodeError, EzTomlEncodeError, EzTomlError
 from .tz import EzTomlTz
 
-__version__ = "0.0.1.dev2"
+__version__ = "0.0.1.dev3"
 
 
 def loads(src, **kwargs):
@@ -38,8 +38,10 @@ def lint_files(args=None):
     from argparse import ArgumentParser
 
     parser = ArgumentParser("toml-lint")
-    parser.add_argument("paths", metavar="file_or-directory", nargs="+")
+    parser.add_argument("paths", metavar="file_or_directory", nargs="+")
     parser.add_argument("-r", "--recursive", action="store_true")
+    parser.add_argument("--sort-keys", dest="sort_keys", action="store_true")
+    parser.add_argument("--preserve-style", dest="preserve_style", action="store_true")
     parsed = parser.parse_args(args)
 
     matches = []
@@ -60,11 +62,11 @@ def lint_files(args=None):
 
         try:
             with io.open(path, "rt", encoding="utf-8") as infile:
-                decoded = load(infile)
+                decoded = load(infile, preserve_style=parsed.preserve_style)
 
             # load to an intermediate variable, so that we don't wipe out the file
             # if there's an error after the handle is opened
-            encoded = dumps(decoded)
+            encoded = dumps(decoded, sort_keys=parsed.sort_keys, preserve_style=parsed.preserve_style)
 
             with io.open(path, "wt", encoding="utf-8") as outfile:
                 outfile.write(encoded)

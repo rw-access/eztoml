@@ -1,4 +1,5 @@
 from __future__ import unicode_literals
+
 import re
 
 NEWLINE = "\n"
@@ -25,7 +26,6 @@ RE_FLAGS = re.DOTALL | re.UNICODE | re.MULTILINE
 # - backslash
 # - and the control characters other than tab (U+0000 to U+0008, U+000A to U+001F, U+007F).
 CONTROL_CHARS = "".join([chr(u) for u in range(0x0, 0x8 + 1)] + [chr(u) for u in range(0xA, 0x1F)] + [chr(0x7F)])
-
 TAB = "\t"
 ESCAPES = {
     "b": "\b",
@@ -37,3 +37,5 @@ ESCAPES = {
     "\\": "\\",
 }
 UNESCAPES = {v: "\\" + k for k, v in ESCAPES.items()}
+
+escape_chars = "".join(k for k in CONTROL_CHARS if k not in (DQ_INLINE, NEWLINE)) + TAB

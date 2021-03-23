@@ -30,7 +30,7 @@ class Source(object):
 
     @property
     def remaining(self):
-        return self.text[self.pos :]
+        return self.text[self.pos:]
 
     @property
     def remaining_line(self):
@@ -39,12 +39,12 @@ class Source(object):
 
     def peek(self, num_chars=1):
         if self.pos < self.size:
-            return self.text[self.pos : self.pos + num_chars]
+            return self.text[self.pos: self.pos + num_chars]
 
     def peek_match(self, regex):  # type: (re.Pattern) -> str
         matched = regex.match(self.remaining)
         if matched is not None:
-            return self.text[self.pos + matched.start() : self.pos + matched.end()]
+            return self.text[self.pos + matched.start(): self.pos + matched.end()]
 
     def take_match(self, regex):  # type: (re.Pattern) -> str
         matched = regex.match(self.remaining)
@@ -70,13 +70,13 @@ class Source(object):
         return self.peek(len(prefix)) == prefix
 
     def remove_prefix(self, prefix):
-        if self.text[self.pos : self.pos + len(prefix)] == prefix:
+        if self.text[self.pos: self.pos + len(prefix)] == prefix:
             self.take(len(prefix))
             return True
         return False
 
     def take(self, num_chars=1):
-        taken = self.text[self.pos : self.pos + num_chars]
+        taken = self.text[self.pos: self.pos + num_chars]
         size = len(taken)
         assert size == num_chars
         self.pos += size

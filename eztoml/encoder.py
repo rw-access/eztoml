@@ -15,9 +15,9 @@ from .tokens import (
     UNESCAPES,
     DQ_MULTI,
     SQ_MULTI,
-    NEWLINE,
 )
-from .utils import string_types, unicode_type, number_types
+from .types import unicode_type, string_types, number_types, InlineString, RawInlineString, MultiLineString, \
+    RawMultiLineString
 
 try:
     from functools import lru_cache
@@ -26,6 +26,7 @@ except ImportError:
     def lru_cache(**_):
         def decorator(f):
             return f
+
         return decorator
 
 
@@ -143,17 +144,17 @@ class Table(object):
 
 
 class Encoder(object):
-
     _key_regex = re.compile(r"^[-_A-Za-z0-9]+$")
     _word_regex = re.compile(r"[^\s]*\s*", re.MULTILINE | re.DOTALL | re.UNICODE)
 
-    def __init__(self, sort_keys=False, nl="\n", indent=2, wrap=120, preserve_cr=False):
+    def __init__(self, sort_keys=False, nl="\n", indent=2, wrap=120, preserve_cr=False, preserve_style=False):
         self.indent = indent
         self.nl = nl
         self.sort_keys = sort_keys
         self.sorted = sorted if sort_keys else lambda x: x
         self.wrap = wrap
         self.preserve_cr = preserve_cr
+        self.preserve_style = preserve_style
         object.__init__(self)
 
     def encode(self, document):
@@ -212,7 +213,7 @@ class Encoder(object):
                     self._write_table_header(table, stream)
 
             if table.kv:
-                self._write_kv(list(table.kv.items()), stream)
+                self._write_kv(list(self.sorted(table.kv.items())), stream)
 
     def _write_array_table_header(self, table, stream):
         # type: (Table, TokenStream) -> None
@@ -279,29 +280,43 @@ class Encoder(object):
         has_backslash = "\\" in value
         has_tab = TAB in value
 
-        if not multiline:
-            must_escape = any(k in CONTROL_CHARS or should_unicode_escape(k) for k in value)
+        # strip out \r because we can't make any guarantees
+        # and don't want to mix file endings in the target file
+        must_escape = any(k not in "\t\r\n" and k in CONTROL_CHARS for k in value)
+        should_escape = must_escape or any(should_unicode_escape(k) for k in value)
 
-            if must_escape is False:
+        style_types = InlineString, RawInlineString, MultiLineString, RawMultiLineString
+        method = None
+
+        if self.preserve_style and isinstance(value, style_types):
+            if isinstance(value, RawInlineString) and not (multiline or must_escape or has_tab or has_single_quote):
+                method = self._encode_inline_raw_string
+            elif isinstance(value, InlineString) and not must_escape:
+                method = self._encode_inline_string
+            elif isinstance(value, RawMultiLineString) and not must_escape and SQ_MULTI not in value:
+                method = self._encode_multiline_raw_string
+            elif isinstance(value, MultiLineString):
+                method = self._encode_multiline_string
+
+        if method is not None:
+            return method(value, stream)
+
+        if not multiline:
+            if should_escape is False:
                 if not has_double_quote and not has_backslash:
                     # can use "..." without any escape needed
                     return self._encode_inline_string(value, stream)
 
-                if not has_single_quote and not has_tab and (has_double_quote or has_backslash):
+                if not has_single_quote and (has_double_quote or has_backslash):
                     # a raw string is preferred if it has " or \ and doesn't require any other escapes
                     return self._encode_inline_raw_string(value, stream)
 
             return self._encode_inline_string(value, stream)
-        else:
-            # strip out \r because we can't make any guarantees
-            # and don't want to mix file endings in the target file
-            escape_chars = "".join(k for k in CONTROL_CHARS if k not in (DQ_INLINE, NEWLINE)) + TAB
-            must_escape = any(k in escape_chars or should_unicode_escape(k) for k in value)
 
-            if not must_escape and (has_backslash and SQ_MULTI not in value):
-                return self._encode_multiline_raw_string(value, stream)
-            else:
-                return self._encode_multiline_string(value, stream)
+        if not should_escape and (has_backslash and SQ_MULTI not in value):
+            return self._encode_multiline_raw_string(value, stream)
+        else:
+            return self._encode_multiline_string(value, stream)
 
     def _encode_multiline_raw_string(self, value, stream):  # type: (str, TokenStream) -> None
         stream.append(SQ_MULTI)
@@ -358,7 +373,7 @@ class Encoder(object):
         stream.append(escape(value))
         stream.append(DQ_INLINE)
 
-    def _encode_inline_table(self, value, stream):  # type: (str, TokenStream) -> None
+    def _encode_inline_table(self, value, stream):  # type: (list, TokenStream) -> None
         # determine if it should be split across multiple lines
         multiline = False
         running_length = 0
@@ -417,6 +432,7 @@ class Encoder(object):
             self._encode_string(value, stream, multiline=multiline)
         elif isinstance(value, dict):
             stream.append("{")
+
             for pos, (k, v) in enumerate(self.sorted(value.items())):
                 if pos != 0:
                     stream.append(", ")

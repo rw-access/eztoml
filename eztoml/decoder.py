@@ -17,8 +17,8 @@ from .tokens import (
     CONTROL_CHARS,
     ESCAPES,
 )
+from .types import InlineString, RawInlineString, MultiLineString, RawMultiLineString, string_types
 from .tz import EzTomlTz
-from .utils import string_types
 
 try:
     from_codepoint = unichr
@@ -27,7 +27,6 @@ except NameError:
 
 
 class Decoder(object):
-
     __escapes = ESCAPES
     _time_regex = re.compile(r"^(\d{2}):(\d{2}):(\d{2})(?:\.(\d{3,}))?")
     _date_regex = re.compile(r"^(\d{4})-(\d{2})-(\d{2})")
@@ -45,6 +44,10 @@ class Decoder(object):
     _is_hex8 = staticmethod(re.compile(r"^[A-Za-z0-9]{8}").match)
     _get_escape = staticmethod(__escapes.get)
     _is_control_char = staticmethod(CONTROL_CHARS.__contains__)
+
+    def __init__(self, preserve_style=False):
+        self.preserve_types = preserve_style
+        object.__init__(self)
 
     def decode(self, source):
         if isinstance(source, bytes):
@@ -277,16 +280,23 @@ class Decoder(object):
         raise EzTomlDecodeError("Expected ]")
 
     def _decode_str(self, source):
+        # type: (Source) -> str
         if source.has_prefix(DQ_MULTI):
-            return self._decode_escaped_str_multiline(source)
+            decoded = self._decode_escaped_str_multiline(source)
+            cls = MultiLineString
         elif source.has_prefix(SQ_MULTI):
-            return self._decode_literal_str_multiline(source)
+            decoded = self._decode_literal_str_multiline(source)
+            cls = RawMultiLineString
         elif source.has_prefix(DQ_INLINE):
-            return self._decode_escaped_str(source)
+            decoded = self._decode_escaped_str(source)
+            cls = InlineString
         elif source.has_prefix(SQ_INLINE):
-            return self._decode_literal_str(source)
+            decoded = self._decode_literal_str(source)
+            cls = RawInlineString
         else:
             raise EzTomlDecodeError("Unknown string type")
+
+        return cls(decoded) if self.preserve_types else decoded
 
     @classmethod
     def _unescape(cls, source):
